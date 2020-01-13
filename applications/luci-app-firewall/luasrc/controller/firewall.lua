@@ -21,3 +21,4 @@ function index()
 		form("firewall/custom"),
 		_("Custom Rules"), 40).leaf = true
 end
+
