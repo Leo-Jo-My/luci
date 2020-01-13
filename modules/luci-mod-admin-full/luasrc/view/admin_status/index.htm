@@ -375,7 +375,7 @@
 		<div class="tr"><div class="td left" width="33%"><%:Model%></div><div class="td left"><%=pcdata(boardinfo.model or "?")%><%=luci.sys.exec("cat /etc/bench.log") or " "%></div></div>
 		<div class="tr"><div class="td left" width="33%"><%:Architecture%></div><div class="td left"><%=pcdata(boardinfo.system or "?")%> x <%=luci.sys.exec("cat /proc/cpuinfo | grep 'processor' | wc -l") or "1"%></div></div>
 
-                                 <div class="tr"><div class="td left"  width="33%"><%:CPU Info%></div><div class="td left"><%=luci.sys.exec("grep 'MHz' /proc/cpuinfo | cut -c11- |sed -n '1p'")%> MHz <%=luci.sys.exec("cat /etc/bench.log") or " "%> <%=luci.sys.exec("sensors | grep 'Core 0' | cut -c10-24")%></div></div>
+                                 <div class="tr"><div class="td left"  width="33%">cpu信息</div><div class="td left"><%=luci.sys.exec("grep 'MHz' /proc/cpuinfo | cut -c11- |sed -n '1p'")%> MHz <%=luci.sys.exec("cat /etc/bench.log") or " "%> <%=luci.sys.exec("sensors | grep 'Core 0' | cut -c10-24")%></div></div>
 
 
 		<div class="tr"><div class="td left" width="33%"><%:Firmware Version%></div><div class="td left">
