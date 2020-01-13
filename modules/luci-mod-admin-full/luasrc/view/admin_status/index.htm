@@ -48,6 +48,7 @@
 		local rv = {
 			uptime     = sysinfo.uptime or 0,
 			localtime  = os.date(),
+			cpuusage   = luci.sys.exec("echo $( echo $(cat /proc/stat | grep \"^cpu \" | awk '{print $1+$2+$3+$4+$5+$6+$7 \" \" $1+$2+$3+$6+$7}') $(sleep 1 && cat /proc/stat | grep \"^cpu \" | awk '{print $1+$2+$3+$4+$5+$6+$7 \" \" $1+$2+$3+$6+$7}') | awk '{print (($4-$2)/($3-$1))*100}' )"),
 			loadavg    = sysinfo.load or { 0, 0, 0 },
 			memory     = meminfo,
 			swap       = swapinfo,
@@ -324,6 +325,8 @@
 					info.loadavg[1] / 65535.0,
 					info.loadavg[2] / 65535.0
 				);
+                                                     if (e = document.getElementById('cpuusage'))
+				e.innerHTML = String.format('%.02f\%',info.cpuusage);
 
 			if (e = document.getElementById('memtotal'))
 				e.innerHTML = progressbar(
@@ -369,8 +372,12 @@
 
 	<div class="table" width="100%">
 		<div class="tr"><div class="td left" width="33%"><%:Hostname%></div><div class="td left"><%=luci.sys.hostname() or "?"%></div></div>
-		<div class="tr"><div class="td left" width="33%"><%:Model%></div><div class="td left"><%=pcdata(boardinfo.model or "?")%></div></div>
-		<div class="tr"><div class="td left" width="33%"><%:Architecture%></div><div class="td left"><%=pcdata(boardinfo.system or "?")%></div></div>
+		<div class="tr"><div class="td left" width="33%"><%:Model%></div><div class="td left"><%=pcdata(boardinfo.model or "?")%><%=luci.sys.exec("cat /etc/bench.log") or " "%></div></div>
+		<div class="tr"><div class="td left" width="33%"><%:Architecture%></div><div class="td left"><%=pcdata(boardinfo.system or "?")%> x <%=luci.sys.exec("cat /proc/cpuinfo | grep 'processor' | wc -l") or "1"%></div></div>
+
+                                 <div class="tr"><div class="td left"  width="33%"><%:CPU Info%></div><div class="td left"><%=luci.sys.exec("grep 'MHz' /proc/cpuinfo | cut -c11- |sed -n '1p'")%> MHz <%=luci.sys.exec("cat /etc/bench.log") or " "%> <%=luci.sys.exec("sensors | grep 'Core 0' | cut -c10-24")%></div></div>
+
+
 		<div class="tr"><div class="td left" width="33%"><%:Firmware Version%></div><div class="td left">
 			<%=pcdata(ver.distname)%> <%=pcdata(ver.distversion)%> /
 			<%=pcdata(ver.luciname)%> (<%=pcdata(ver.luciversion)%>)
@@ -379,6 +386,17 @@
 		<div class="tr"><div class="td left" width="33%"><%:Local Time%></div><div class="td left" id="localtime">-</div></div>
 		<div class="tr"><div class="td left" width="33%"><%:Uptime%></div><div class="td left" id="uptime">-</div></div>
 		<div class="tr"><div class="td left" width="33%"><%:Load Average%></div><div class="td left" id="loadavg">-</div></div>
+                                 <div class="tr"><div class="td left" width="33%">&#67;&#80;&#85;&#32;&#20351;&#29992;&#29575; (%)</div><div class="td left" id="cpuusage">-</div></div>
+                                   
+                                 <div class="tr"><div class="td left" width="33%">本地天气</div>
+                                 <iframe width="320" scrolling="no" height="100" frameborder="0" allowtransparency="true" src="&#104;&#116;&#116;&#112;&#58;&#47;&#47;&#105;&#46;&#116;&#105;&#97;&#110;&#113;&#105;&#46;&#99;&#111;&#109;&#47;&#105;&#110;&#100;&#101;&#120;&#46;&#112;&#104;&#112;?c=code&id=7&icon=5&num=20"></iframe>
+                                    </div>
+                                      <div class="tr"><div class="td left" width="33%">帮助</div>
+				
+
+                                                                      <input type="button" class="cbi-button cbi-button-apply" value="加入TG群" onclick="window.open('https://t.me/joinchat/IBxysRUIgFq7pujqqZLc6Q')" /></div>
+                                  
+                                                                     
 	</div>
 </div>
 
@@ -460,3 +478,4 @@
 -%>
 
 <%+footer%>
+
